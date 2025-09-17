@@ -43,7 +43,7 @@ jobs:
           Start-Process msiexec.exe -ArgumentList "/i", "`"$installerPath`"", "/quiet", "/norestart" -Wait
           Remove-Item $installerPath -Force
 
-      - name: Install Developer Tools
+      - name: Install All Python Versions
         run: |
           # Install Chocolatey if not present
           if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
@@ -52,20 +52,13 @@ jobs:
               iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           }
 
-          # Git
-          choco install git -y
-          
-          # Visual Studio Code
-          choco install vscode -y
-          
-          # Python 3
+          # تثبيت جميع إصدارات بايثون
+          choco install python --version=3.7.9 -y
+          choco install python --version=3.8.10 -y
+          choco install python --version=3.9.13 -y
+          choco install python --version=3.10.11 -y
+          choco install python --version=3.11.9 -y
           choco install python --version=3.12.0 -y
-          
-          # Node.js LTS
-          choco install nodejs-lts -y
-          
-          # .NET SDK
-          choco install dotnet-8.0-sdk -y
 
       - name: Establish Tailscale Connection
         run: |

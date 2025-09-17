@@ -43,22 +43,25 @@ jobs:
           Start-Process msiexec.exe -ArgumentList "/i", "`"$installerPath`"", "/quiet", "/norestart" -Wait
           Remove-Item $installerPath -Force
 
-      - name: Install Developer Tools
+      - name: Install Git and All Python Versions
         run: |
-          # Git
-          winget install --id Git.Git -e --source winget
-          
-          # Visual Studio Code
-          winget install --id Microsoft.VisualStudioCode -e --source winget
-          
-          # Python 3
-          winget install --id Python.Python.3.12 -e --source winget
-          
-          # Node.js LTS
-          winget install --id OpenJS.NodeJS.LTS -e --source winget
-          
-          # .NET SDK
-          winget install --id Microsoft.DotNet.SDK.8 -e --source winget
+          # Install Chocolatey if not present
+          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+              Set-ExecutionPolicy Bypass -Scope Process -Force
+              [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+              iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          }
+
+          # تثبيت Git
+          choco install git -y
+
+          # تثبيت جميع إصدارات بايثون
+          choco install python --version=3.7.9 -y
+          choco install python --version=3.8.10 -y
+          choco install python --version=3.9.13 -y
+          choco install python --version=3.10.11 -y
+          choco install python --version=3.11.9 -y
+          choco install python --version=3.12.0 -y
 
       - name: Establish Tailscale Connection
         run: |
@@ -90,10 +93,9 @@ jobs:
         run: |
           Write-Host "`n=== RDP ACCESS ==="
           Write-Host "Address: $env:TAILSCALE_IP"
-          Write-Host "Username: TOOLBOXLAAP"
+          Write-Host "Username: TOOLBOXLAP"
           Write-Host "Password: admin@123"
-          Write-Host "==================`n"
-          while ($true) {
+          Write-Host "==================`n"          while ($true) {
               Write-Host "[$(Get-Date)] RDP Active - Use Ctrl+C in workflow to terminate"
               Start-Sleep -Seconds 300
           }
